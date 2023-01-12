@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            height: 100%;
+        }
+        body {
+            height: 100%;
+        }
+        .container {
+            height: 100%;
+            background-color: #a6c1ee;
+            background-image: linear-gradient(to right, #fbc2eb, #a6c1ee);
+        }
+        .login-wrapper {
+            background-color: #fff;
+            width: 358px;
+            height: 588px;
+            border-radius: 15px;
+            padding: 0 50px;
+            position: relative;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .header {
+            font-size: 38px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 200px;
+        }
+        .input-item {
+            display: block;
+            width: 100%;
+            margin-bottom: 20px;
+            border: 0;
+            padding: 10px;
+            border-bottom: 1px solid rgb(128, 125, 125);
+            font-size: 15px;
+            outline: none;
+        }
+        .btn {
+            border: 0;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+            margin-top: 40px;
+            background-color: #a6c1ee;
+            background-image: linear-gradient(to right, #a6c1ee, #fbc2eb);
+            color: #fff;
+        }
+        .msg {
+            text-align: center;
+            line-height: 88px;
+        }
+        a {
+            text-decoration-line: none;
+            color: #abc1ee;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="login-wrapper">
+            <div class="header">登录</div>
+            <div class="form-wrapper">
+<!--                <form method="post" style="display: inline">-->
+                    <input type="text" id="email" name="email" placeholder="邮箱" class="input-item">
+                    <input type="password" id="password" name="password" placeholder="密码" class="input-item">
+                    <button id="login" class="btn" >登录</button>
+<!--                </form>-->
+            </div>
+            <div class="msg">
+                还没有账户?
+                <a href="register.html">立即注册</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#login').click(function () {
+            $.ajax({
+                url:'http://localhost:3000/login',
+                type:'POST',
+                data:{
+                    email:$("#email").val(),
+                    password:$("#password").val(),
+                },
+                success:function (res) {
+                    if (res.valueOf() === '密码错误!' || res.valueOf() === '该用户不存在!') {
+                        alert(res);
+                    } else {
+                        alert('登录成功');
+                        document.cookie = 'userName=' + res;
+                        window.location = 'firstPage.html';
+                    }
+                },
+                error:function (err) {
+                    console.log(err);
+                }
+            })
+        })
+    })
+</script>
+</html>

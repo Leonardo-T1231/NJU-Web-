@@ -1,0 +1,86 @@
+#header{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 70px;
+    background: #fff;
+}
+#header ul li{
+    display: inline-block;
+    width: auto;
+    padding: 8px 12px;
+}
+#header li a{
+    font-family: "Microsoft YaHei";
+    display: block;
+    color: #000;
+    text-align: center;
+    padding: 0;
+    text-decoration: none;
+}
+#header li a:hover{
+    color: #636363;
+}
+.login{
+    margin-right: 50px;
+    float: right;
+}
+
+.modeChange {
+    padding-right: 12px;
+    float: right;
+}
+.switch {
+    position: relative;
+    top: 3px;
+    display: inline-block;
+    width: 30px;
+    height: 17px;
+}
+.switch input{
+    display: none;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #ccc;
+    border-radius: 17px;
+    transition: .4s;
+}
+.slider::before {
+    content: '';
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    left: 2px;
+    bottom: 2px;
+    background: #fff;
+    border-radius: 50%;
+    transition: .4s;
+}
+input:checked + .slider {
+    background: #b892ff;
+}
+input:checked + .slider::before {
+    transform: translateX(13px);
+}
+
+#header.dark {
+    background: #333;
+}
+#header.dark li a {
+    color: #fff;
+}
+#quit {
+    position: absolute;
+    margin-top: 0;
+    margin-left: 5px;
+    background-color:#333333;
+    color: #fff;
+    border:none;
+    border-radius:10px;
+}

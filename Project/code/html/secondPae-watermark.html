@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>picture1</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/header.css">
+    <link rel="stylesheet" href="../css/watermark.css">
+</head>
+<body>
+
+<div id="header"></div>
+<script type="text/javascript" src="../js/header.js"></script>
+
+<div id="image" style="margin-top: 70px;">
+    <div class="watermark" style="margin-top: 70px;"></div>
+
+    <div class="item">
+        <p class="title"><b>原始图像</b></p>
+        <canvas id="originalImage"></canvas>
+    </div>
+
+    <div class="item">
+        <p class="title"><b>添加频域水印后的图像</b></p>
+        <canvas id="watermarkImage"></canvas>
+    </div>
+
+    <div class="item">
+        <p class="title"><b>解析后的频域水印</b></p>
+        <canvas id="showWatermark"></canvas>
+    </div>
+</div>
+
+<script src="../js/opencv.js" type="text/javascript"></script>
+<script type="text/javascript" src="../js/handleCookie.js"></script>
+<script type="text/javascript">
+    let imgSrc = getCookie('imgSrc');
+    console.log(imgSrc);
+    // var oDiv = document.getElementById("image");
+    // oDiv.innerHTML += "<img style=\"display: inline-block; height: auto; max-width: 100%;\" " + imgSrc + " alt=\"\">";
+
+    let watermarkText = 'HuangTao 201250111';
+
+    cv['onRuntimeInitialized'] = () => {
+        var original_canvas = document.getElementById('originalImage');
+        var watermarkImg_canvas = document.getElementById('watermarkImage');
+        var showWatermark_canvas = document.getElementById('showWatermark');
+        var ctx = original_canvas.getContext('2d');
+        var img = new Image();
+        img.src = imgSrc;
+        img.onload = function () {
+            let img_width = img.width,
+                img_height = img.height;
+            let img_ratio = img_width / img_height; // 图片宽高比
+
+            let cont_width,
+                cont_height;
+            if (window.outerHeight < window.outerWidth) {
+                cont_height = window.outerHeight;
+                cont_width = cont_height * img_ratio;
+            } else {
+                cont_width = window.outerWidth;
+                cont_height = cont_width / img_ratio
+            }
+
+
+            img.width = cont_width;
+            img.height = cont_height;
+
+            let cont_left = 0,
+                cont_top = 0;
+            cont_left = (window.outerWidth - cont_width) / 2;
+
+            original_canvas.width = cont_width;
+            original_canvas.height = cont_height;
+            original_canvas.left = cont_left;
+            var items = document.getElementsByClassName('item');
+            for (var i = 0; i < items.length; i++) {
+                items[i].style.marginLeft = cont_left + 'px';
+            }
+            ctx.drawImage(img, 0, 0, cont_width, cont_height);
+
+            watermarkImg_canvas.width = original_canvas.width;
+            watermarkImg_canvas.height = original_canvas.height;
+            showWatermark_canvas.width = original_canvas.width;
+            showWatermark_canvas.height = original_canvas.height;
+
+            // 将文字写入到经过傅里叶变换的图片中，并显示在页面中
+            let src = cv.imread(img);
+            let src_array = new cv.MatVector();
+            cv.split(src, src_array);
+            let complexI = doDft(src_array.get(0));
+            complexI = addWatermarkText(complexI, watermarkText);
+            let mag = showDft(complexI);
+            cv.imshow('showWatermark', mag);
+            // 将图片逆变换，将水印隐藏
+            let outMat = iDft(complexI);
+            src_array[0] = new cv.Mat(outMat);
+            let all_re = new cv.Mat();
+            cv.merge(src_array, all_re);
+            cv.imshow('watermarkImage', all_re);
+        };
+    };
+
+    var planes;
+    function doDft(src) {
+        let optimalRows = cv.getOptimalDFTSize(src.rows);
+        let optimalCols = cv.getOptimalDFTSize(src.cols);
+        let s0 = cv.Scalar.all(0);
+        let padded = new cv.Mat();
+        cv.copyMakeBorder(src, padded, 0, optimalRows - src.rows, 0,
+            optimalCols - src.cols, cv.BORDER_CONSTANT, s0);
+
+        let plane0 = new cv.Mat();
+        padded.convertTo(plane0, cv.CV_32F);
+        planes = new cv.MatVector();
+        let complexI = new cv.Mat();
+        let plane1 = new cv.Mat.zeros(padded.rows, padded.cols, cv.CV_32F);
+        planes.push_back(plane0);
+        planes.push_back(plane1);
+        cv.merge(planes, complexI);
+        cv.dft(complexI, complexI);
+        return complexI;
+    }
+
+    function addWatermarkText(complexI, text) {
+        cv.putText(complexI, text, new cv.Point(40, 40), cv.FONT_HERSHEY_DUPLEX, 0.8, new cv.Scalar(0,0,0,0),3);
+        cv.flip(complexI, complexI, -1);
+        cv.putText(complexI, text, new cv.Point(40, 40), cv.FONT_HERSHEY_DUPLEX, 0.8, new cv.Scalar(0,0,0,0),3);
+        cv.flip(complexI, complexI, -1);
+        return complexI;
+    }
+
+    function showDft(complexI) {
+        cv.split(complexI, planes);
+        cv.magnitude(planes.get(0), planes.get(1), planes.get(0));
+        let mag = planes.get(0);
+
+        let m1 = new cv.Mat.ones(mag.rows, mag.cols, mag.type());
+        cv.add(mag, m1, mag);
+        cv.log(mag, mag);
+        let rect = new cv.Rect(0, 0, mag.cols & -2, mag.rows & -2);
+        mag = mag.roi(rect);
+        let cx = mag.cols / 2;
+        let cy = mag.rows / 2;
+        let tmp = new cv.Mat();
+
+        let rect0 = new cv.Rect(0, 0, cx, cy);
+        let rect1 = new cv.Rect(cx, 0, cx, cy);
+        let rect2 = new cv.Rect(0, cy, cx, cy);
+        let rect3 = new cv.Rect(cx, cy, cx, cy);
+
+        let q0 = mag.roi(rect0);
+        let q1 = mag.roi(rect1);
+        let q2 = mag.roi(rect2);
+        let q3 = mag.roi(rect3);
+
+        q0.copyTo(tmp);
+        q3.copyTo(q0);
+        tmp.copyTo(q3);
+
+        q1.copyTo(tmp);
+        q2.copyTo(q1);
+        tmp.copyTo(q2);
+
+        cv.normalize(mag, mag, 0, 1, cv.NORM_MINMAX);
+        let temp1 = new cv.Mat();
+        mag.convertTo(temp1, cv.CV_8UC1, 255);
+        return mag;
+    }
+
+    function iDft(complexI) {
+        let outMat = new cv.Mat();
+        cv.dft(complexI, outMat, cv.DFT_SCALE | cv.DFT_REAL_OUTPUT | cv.DFT_INVERSE);
+        return outMat;
+    }
+
+</script>
+
+
+</body>
+</html>

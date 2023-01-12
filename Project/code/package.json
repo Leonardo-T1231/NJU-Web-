@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "express": "^5.0.0-beta.1",
+    "md5": "^2.3.0",
+    "mongoose": "^6.8.2",
+    "mysql": "^2.18.1"
+  },
+  "name": "code",
+  "version": "1.0.0",
+  "main": "js/header.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

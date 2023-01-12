@@ -1,0 +1,9 @@
+/* dark样式主题 */
+.dark{
+    color: #fff;
+    background: #333;
+}
+
+.dark li a {
+    color: #fff;
+}

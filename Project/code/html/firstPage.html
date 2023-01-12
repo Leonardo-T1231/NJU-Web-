@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>秋日/校园</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/header.css">
+    <style>
+        .box-pic {
+            margin-left: 100px;
+            margin-right: 100px;
+            column-count: 3;
+            column-gap: 10px;
+        }
+
+        .item {
+            padding: 3px;
+            margin-bottom: 10px;
+        }
+
+        .item img {
+            display: block;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="header">
+<!--    <div class="box-top">-->
+<!--        <ul class="top-ui">-->
+<!--            <li class="home">-->
+<!--                <a href="firstPage.html"><strong>首页</strong></a>-->
+<!--            </li>-->
+
+<!--            <li class="userInfo">-->
+<!--                <strong id="userName"></strong>-->
+<!--                <button id="quit" onclick="quit()">退出登录</button>-->
+<!--            </li>-->
+
+<!--            <li class="login">-->
+<!--                <a href="login.html"><strong>登录/注册</strong></a>-->
+<!--            </li>-->
+
+<!--            <li class="modeChange">-->
+<!--                <strong>夜间模式</strong>-->
+<!--                <label class="switch">-->
+<!--                    <input type="checkbox" onclick="changeMode()">-->
+<!--                    <span class="slider"></span>-->
+<!--                </label>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </div>-->
+</div>
+<script type="text/javascript" src="../js/header.js"></script>
+<script type="text/javascript" src="../js/handleCookie.js"></script>
+<script type="text/javascript">
+    function passImg() {
+        var obj = document.elementFromPoint(event.clientX, event.clientY);
+        var a = obj.outerHTML.split(" ");
+        console.log(a);
+        document.cookie = 'imgSrc=' + a[1].substring(5, a[1].length - 1);
+        console.log(document.cookie);
+
+        if (isLogged()) {
+            document.getElementById('jump').href = 'secondPage.html';
+        } else {
+            alert('请先登录!')
+        }
+    }
+</script>
+
+<div class="box-pic" style="margin-top: 70px;">
+
+    <a id="jump" href="">
+        <div class="item">
+            <img src="../img/1.jpg" alt="" onclick="passImg()">
+        </div>
+        <div class="item">
+            <img src="../img/2.jpg" alt="" onclick="passImg()">
+        </div>
+        <div class="item">
+            <img src="../img/3.jpg" alt="" onclick="passImg()">
+        </div>
+        <div class="item">
+            <img src="../img/4.jpg" alt="" onclick="passImg()">
+        </div>
+        <div class="item">
+            <img src="../img/5.jpg" alt="" onclick="passImg()">
+        </div>
+        <div class="item">
+            <img src="../img/6.jpg" alt="" onclick="passImg()">
+        </div>
+        <div class="item">
+            <img src="../img/7.jpg" alt="" onclick="passImg()">
+        </div>
+        <div class="item">
+            <img src="../img/8.jpg" alt="" onclick="passImg()">
+        </div>
+        <div class="item">
+            <img src="../img/9.jpg" alt="" onclick="passImg()">
+        </div>
+        <div class="item">
+            <img src="../img/10.jpg" alt="" onclick="passImg()">
+        </div>
+    </a>
+
+</div>
+
+</body>
+<script type="text/javascript">
+    console.log(document.cookie);
+</script>
+</html>

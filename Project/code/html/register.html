@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            height: 100%;
+        }
+
+        .container {
+            height: 100%;
+            background-color: #a6c1ee;
+            background-image: linear-gradient(to right, #fbc2eb, #a6c1ee);
+        }
+
+        .signUp-wrapper {
+            background-color: #fff;
+            width: 358px;
+            height: 710px;
+            border-radius: 15px;
+            padding: 0 50px;
+            position: relative;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .header {
+            font-size: 38px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 150px;
+        }
+
+        .input-item {
+            display: block;
+            width: 100%;
+            margin-bottom: 20px;
+            border: 0;
+            padding: 10px;
+            border-bottom: 1px solid rgb(128, 125, 125);
+            font-size: 15px;
+            outline: none;
+        }
+
+        .btn {
+            border: 0;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+            margin-top: 40px;
+            background-color: #a6c1ee;
+            background-image: linear-gradient(to right, #a6c1ee, #fbc2eb);
+            color: #fff;
+        }
+
+        .msg {
+            text-align: center;
+            line-height: 88px;
+        }
+
+        a {
+            text-decoration-line: none;
+            color: #abc1ee;
+        }
+        .wrong {
+            /*text-indent: 16px;*/
+            font-size: 10px;
+            color: red;
+            background-repeat: no-repeat;
+        }
+
+        #code {
+            color: #ffffff;
+            /*字体颜色白色*/
+            background-color: #000000;
+            font-size: 20pt;
+            font-family: "华康娃娃体W5";
+            padding: 5px 35px 10px 35px;
+            margin-left: 5%;
+            cursor: pointer;
+        }
+
+        #pwdStrength {
+            height: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            padding: 2px;
+        }
+        .strengthLv1 {
+            background: red;
+            height: 10px;
+            width: 33%;
+        }
+        .strengthLv2 {
+            background: orange;
+            height: 10px;
+            width: 66%;
+        }
+        .strengthLv3 {
+            background: green;
+            height: 10px;
+            width: 100%;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="signUp-wrapper">
+            <div class="header">注册</div>
+            <div class="form-wrapper">
+                    <input type="text" id="email" name="email" placeholder="邮箱" class="input-item" onblur="checkEmail()">
+                    <p id = "emailCW"></p>
+
+                    <input type="text" id="name" name="name" placeholder="昵称" class="input-item" onblur="checkName()">
+                    <p id = "nameCW"></p>
+
+                    <input type="password" id="password" name="password" placeholder="密码" class="input-item" onblur="checkPwd()">
+                    <p id="pwCW"></p>
+
+                    <div class="login_box" style="color: #cccccc">
+                        密码强度:
+                        <div id="pwdStrength"></div>
+                    </div>
+
+                    <input type="password" id="rpt-password" placeholder="请确认密码" class="input-item" onblur="checkRptPwd()">
+                    <p id="rpt-pwCW"></p>
+
+                    <input type="text" id="verification-code" placeholder="验证码" class="input-item" onblur="checkCode()">
+                    <span id="code" title="看不清，换一张"></span>
+                    <p id="vcodeCW"></p>
+
+                    <button id="register" class="btn">注册</button>
+            </div>
+            <div class="msg">
+                已有账户？
+                <a href="login.html">立即登录</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+    function checkEmail() {
+        var email = document.getElementById('email').value;
+        var reg = /^\w{1,}@\w{1,}(.\w{1,}){1,}$/;
+        if (email != '') {
+            if (reg.test(email)) {
+                document.getElementById('emailCW').innerText=' ';
+                return true;
+            } else {
+                document.getElementById('emailCW').className = 'wrong';
+                document.getElementById('emailCW').innerText = '请输入有效的邮箱';
+            }
+        } else {
+            document.getElementById('emailCW').className = 'wrong';
+            document.getElementById('emailCW').innerText = '请输入邮箱';
+        }
+
+        return false;
+    }
+
+    function checkName() {
+        var name = document.getElementById('name').value;
+        if (name != '') {
+            document.getElementById('nameCW').innerText=' ';
+            return true;
+        } else {
+            document.getElementById('nameCW').className = 'wrong';
+            document.getElementById('nameCW').innerText = '请输入昵称';
+            return false;
+        }
+    }
+
+    function checkPwd() {
+        var pwd1 = document.getElementById('password').value;
+        var reg = /^[0-9a-zA-Z]{3,20}$/;
+        if (reg.test(pwd1)) {
+            document.getElementById('pwCW').innerText = ' ';
+            return true;
+        } else {
+            document.getElementById('pwCW').className = 'wrong';
+            document.getElementById('pwCW').innerText = '密码长度为3—20位，且仅为大小写字母与数字'
+            return false;
+        }
+    }
+
+        function PasswordStrength(passwordID, strengthID) {
+            this.init(strengthID);
+            let _this = this;
+            document.getElementById(passwordID).onkeyup = function () {//onkeyup 事件,在键盘按键被松开时发生,进行判断
+                _this.checkStrength(this.value);
+            }
+        }
+        PasswordStrength.prototype.init = function (strengthID) {
+            let id = document.getElementById(strengthID);
+            let div = document.createElement('div');
+            let strong = document.createElement('strong');
+            this.oStrength = id.appendChild(div);
+            this.oStrengthTxt = id.parentNode.appendChild(strong);
+        }
+        PasswordStrength.prototype.checkStrength = function (val) { //验证密码强度的函数
+            let aLvTxt = ['', '低', '中', '高'];//定义提示消息的种类
+            let lv = 0; //初始化提示消息为空
+            if (val.match(/[a-z]/g)) { lv++; } //验证是否包含字母
+            if (val.match(/[0-9]/g)) { lv++; }  // 验证是否包含数字
+            if (val.match(/(.[^a-z0-9])/g)) { lv++; } //验证是否包含字母，数字，字符
+            if (val.length < 3) { lv = 0; } //如果密码长度小于6位，提示消息为空
+            if (lv > 3) { lv = 3; }
+            if (!checkPwd())
+                lv = 0;
+            this.oStrength.className = 'strengthLv' + lv;
+            this.oStrengthTxt.innerHTML = aLvTxt[lv];
+        }
+
+        new PasswordStrength('password', 'pwdStrength');
+
+
+    function checkRptPwd() {
+        var pwd1 = document.getElementById('password').value;
+        var pwd2 = document.getElementById('rpt-password').value;
+        if (pwd1 == pwd2 && pwd2 != '') {
+            document.getElementById('rpt-pwCW').innerText = ' ';
+            return true;
+        } else {
+            document.getElementById('rpt-pwCW').className = 'wrong';
+            document.getElementById('rpt-pwCW').innerText = '两次密码不一致'
+            return false;
+        }
+    }
+
+    var code;
+    changeCode();
+    document.getElementById('code').onclick = changeCode;
+    function changeCode() {
+        var arrays = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+            'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+            'u', 'v', 'w', 'x', 'y', 'z',
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+            'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+            'U', 'V', 'W', 'X', 'Y', 'Z'];
+        code = '';
+        for (let i = 0; i < 4; i++) {
+            var r = parseInt(Math.random() * arrays.length);
+            code += arrays[r];
+        }
+        document.getElementById('code').innerHTML = code;
+    }
+
+    function checkCode() {
+        var input_code = document.getElementById('verification-code').value;
+        if (input_code.toLowerCase() === code.toLowerCase()) {
+            document.getElementById('vcodeCW').innerText = ' ';
+            return true;
+        } else {
+            document.getElementById('vcodeCW').className = 'wrong';
+            document.getElementById('vcodeCW').innerText = '验证码错误';
+            return false;
+        }
+    }
+
+    $(function () {
+        $("#register").click(function () {
+            if(checkEmail() && checkName() && checkPwd() && checkRptPwd() && checkCode()) {
+                $.ajax({
+                    url: "http://localhost:3000/register",
+                    type: "POST",
+                    data: {
+                        email: $("#email").val(),
+                        username: $("#name").val(),
+                        password: $("#password").val()
+                    },
+                    success: function (res) {
+                        alert(res);
+                        if (res.valueOf() === "注册成功!")
+                            window.location = "login.html"
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            }
+        })
+    });
+</script>
+</html>

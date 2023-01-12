@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>picture1</title>
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/header.css">
+</head>
+<body>
+
+<div id="header"></div>
+<script type="text/javascript" src="../js/header.js"></script>
+
+<div id="image" style="margin-top: 70px;">
+    <div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div>
+        <span>
+            <a href="secondPae-watermark.html">
+                <button id="watermarkButton" style="font-family: 'Microsoft YaHei UI Light'"><strong>生成水印</strong></button>
+            </a>
+        </span>
+
+        <span>
+            <a href="styleTransfer.html">
+                <button id="styleTransferButton" style="font-family: 'Microsoft YaHei UI Light'"><strong>风格迁移</strong></button>
+            </a>
+        </span>
+    </div>
+
+</div>
+
+<script async="" type="text/javascript" src="../js/opencv.js"></script>
+<script type="text/javascript" src="../js/handleCookie.js"></script>
+<script type="text/javascript">
+    let imgSrc = getCookie('imgSrc');
+    console.log(imgSrc);
+    // var oDiv = document.getElementById("image");
+    // oDiv.innerHTML += "<img style=\"display: inline-block; height: auto; max-width: 100%;\" " + imgSrc + " alt=\"\">";
+
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var img = new Image();
+    img.onload = function() {
+        let img_width = img.width,
+            img_height = img.height;
+        let img_ratio = img_width / img_height; // 图片宽高比
+
+        var cont_width,
+            cont_height;
+        if (window.outerHeight < window.outerWidth) {
+            cont_height = window.outerHeight;
+            cont_width = cont_height * img_ratio;
+        } else {
+            cont_width = window.outerWidth;
+            cont_height = cont_width / img_ratio
+        }
+
+        var cont_left = 0,
+            cont_top = 0;
+        cont_left = (window.outerWidth - cont_width) / 2;
+
+        document.getElementById('image').style.marginLeft = cont_left + 'px';
+        document.getElementById('watermarkButton').style.width = cont_width / 2 + 'px';
+        document.getElementById('styleTransferButton').style.width = cont_width / 2 + 'px';
+
+        canvas.width = cont_width;
+        canvas.height = cont_height;
+
+        ctx.drawImage(img, 0, 0, cont_width, cont_height);
+    };
+    img.src = imgSrc;
+</script>
+
+
+</body>
+</html>
