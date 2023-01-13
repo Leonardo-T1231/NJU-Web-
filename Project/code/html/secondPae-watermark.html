@@ -46,6 +46,7 @@
         var watermarkImg_canvas = document.getElementById('watermarkImage');
         var showWatermark_canvas = document.getElementById('showWatermark');
         var ctx = original_canvas.getContext('2d');
+
         var img = new Image();
         img.src = imgSrc;
         img.onload = function () {
@@ -63,7 +64,6 @@
                 cont_height = cont_width / img_ratio
             }
 
-
             img.width = cont_width;
             img.height = cont_height;
 
@@ -77,13 +77,10 @@
             var items = document.getElementsByClassName('item');
             for (var i = 0; i < items.length; i++) {
                 items[i].style.marginLeft = cont_left + 'px';
+                items[i].width = cont_width;
+                items[i].height = cont_height;
             }
             ctx.drawImage(img, 0, 0, cont_width, cont_height);
-
-            watermarkImg_canvas.width = original_canvas.width;
-            watermarkImg_canvas.height = original_canvas.height;
-            showWatermark_canvas.width = original_canvas.width;
-            showWatermark_canvas.height = original_canvas.height;
 
             // 将文字写入到经过傅里叶变换的图片中，并显示在页面中
             let src = cv.imread(img);

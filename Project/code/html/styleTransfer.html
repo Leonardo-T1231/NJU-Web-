@@ -13,10 +13,21 @@
 
 <div id="image" style="margin-top: 70px;">
     <div class="item">
-        <p class="title"><b>风格迁移后的图像</b></p>
-        <canvas id="diffStyleImage"></canvas>
+        <p class="title"><b>原始图像</b></p>
+        <canvas id="originalImage"></canvas>
+    </div>
+
+    <div class="item">
+        <p class="title"><b>铅笔素描风格</b></p>
+        <canvas id="pencilSketchImg"></canvas>
+    </div>
+
+    <div class="item">
+        <p class="title"><b>铅笔边缘风格</b></p>
+        <canvas id="pencilEdgeImg"></canvas>
     </div>
 </div>
+
 
 <script src="../js/opencv.js" type="text/javascript"></script>
 <script type="text/javascript" src="../js/handleCookie.js"></script>
@@ -25,8 +36,10 @@
     console.log(imgSrc);
 
     cv['onRuntimeInitialized'] = () => {
-        var style_canvas = document.getElementById('diffStyleImage');
-        var ctx = style_canvas.getContext('2d');
+        var original_canvas = document.getElementById('originalImage');
+        var pencilSketch_canvas = document.getElementById('pencilSketchImg');
+        var pencilEdge_canvas = document.getElementById('pencilEdgeImg');
+        var ctx = original_canvas.getContext('2d');
 
         var img = new Image();
         img.src = imgSrc;
@@ -45,7 +58,6 @@
                 cont_height = cont_width / img_ratio
             }
 
-
             img.width = cont_width;
             img.height = cont_height;
 
@@ -53,29 +65,105 @@
                 cont_top = 0;
             cont_left = (window.outerWidth - cont_width) / 2;
 
-            style_canvas.width = cont_width;
-            style_canvas.height = cont_height;
-            style_canvas.left = cont_left;
+            original_canvas.width = cont_width;
+            original_canvas.height = cont_height;
+            original_canvas.left = cont_left;
             var items = document.getElementsByClassName('item');
             for (var i = 0; i < items.length; i++) {
                 items[i].style.marginLeft = cont_left + 'px';
+                items[i].width = cont_width;
+                items[i].height = cont_height;
             }
+            ctx.drawImage(img, 0, 0, cont_width, cont_height);
 
             // 风格迁移
-            let src = cv.imread(img);
-            let gray = new cv.Mat();
-            cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
-
-            let gray_blur = new cv.Mat();
-            let ksize = new cv.Size(25, 25);
-            cv.GaussianBlur(gray, gray_blur, ksize, 0, 0, cv.BORDER_DEFAULT);
-
-            let cartoon = new cv.Mat();
-            cv.divide(gray, gray_blur, cartoon, scale=250.0);
-
-            cv.imshow("diffStyleImage", cartoon);
+            pencilSketch(img);
+            pencilEdge(img);
+            // detailEnhancement(img);
+            // cartoonize(img);
         };
     };
+
+    function pencilSketch(img) {
+        let src = cv.imread(img);
+        let gray = new cv.Mat();
+        cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+
+        let gray_blur = new cv.Mat();
+        let ksize = new cv.Size(25, 25);
+        cv.GaussianBlur(gray, gray_blur, ksize, 0, 0, cv.BORDER_DEFAULT);
+
+        let cartoon = new cv.Mat();
+        cv.divide(gray, gray_blur, cartoon, scale = 250.0);
+
+        cv.imshow('pencilSketchImg', cartoon);
+    }
+
+    function pencilEdge(img) {
+        let src = cv.imread(img);
+        let gray = new cv.Mat();
+        cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+
+        let gray_blur = new cv.Mat();
+        cv.medianBlur(gray, gray_blur, 1);
+
+        let edges = new cv.Mat();
+        cv.Laplacian(gray_blur, edges, -1, ksize = 3);
+
+        let cartoon = new cv.Mat();
+        cv.threshold(edges, cartoon, 150, 255, cv.THRESH_BINARY_INV);
+
+        cv.imshow('pencilEdgeImg', cartoon);
+    }
+
+    // 用不了
+    function detailEnhancement(img) {
+        document.getElementById('titleContent').innerHTML = '细节增强风格';
+
+        let src = cv.imread(img);
+        let gray = new cv.Mat();
+        cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+
+        let gray_blur = new cv.Mat();
+        cv.medianBlur(gray, gray_blur, 3);
+
+        let edges = new cv.Mat();
+        cv.adaptiveThreshold(gray_blur, edges, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 9, 9);
+
+        let color = new cv.Mat();
+        cv.detailEnhance(src, color, sigma_s = 5, sigma_r = 0.5);
+
+        let cartoon = new cv.Mat();
+        cv.bitwise_and(color, color, cartoon, mask = edges);
+
+        cv.imshow('diffStyleImage', cartoon);
+    }
+
+    // 用不了
+    function cartoonize(img) {
+        document.getElementById('titleContent').innerHTML = '卡通化';
+
+        let src = cv.imread(img);
+        let gray = new cv.Mat();
+        cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+
+        let gray_blur = new cv.Mat();
+        cv.medianBlur(gray, gray_blur, 5);
+
+        let edges = new cv.Mat();
+        cv.Laplacian(gray, edges, cv.CV_8U, ksize = 5, scale = 1, delta = 0, cv.BORDER_DEFAULT);
+
+        let thres = new cv.Mat();
+        cv.threshold(edges, thres, 145, 255, cv.THRESH_BINARY_INV);
+
+        let filtered = new cv.Mat();
+        cv.bilateralFilter(src, filtered, 10, 250, 250);
+
+        let cartoon = new cv.Mat();
+        cv.bitwise_and(filtered, filtered, cartoon, mask = thres);
+
+        cv.imshow('diffStyleImage', cartoon);
+    }
 </script>
 
 </body>
