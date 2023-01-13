@@ -75,12 +75,16 @@ input:checked + .slider::before {
 #header.dark li a {
     color: #fff;
 }
+#header.dark button {
+    color: white;
+    border-color: white;
+}
 #quit {
-    position: absolute;
+    position: relative;
     margin-top: 0;
     margin-left: 5px;
-    background-color:#333333;
-    color: #fff;
-    border:none;
+    background-color:transparent;
+    color: black;
+    border-color: black;
     border-radius:10px;
 }

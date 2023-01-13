@@ -9,7 +9,7 @@ header.innerHTML =
 '\n' +
 '            <li class="userInfo">\n' +
 '                <strong id="userName"></strong>\n' +
-'                <button id="quit" onclick="quit()">退出登录</button>\n' +
+'                <button id="quit" onclick="quit()"><strong>退出登录</strong></button>\n' +
 '            </li>\n' +
 '\n' +
 '            <li class="login">\n' +
