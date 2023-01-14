@@ -60,61 +60,6 @@ http.createServer(function (req, res) {
                         res.end("注册成功!");
                     }
                 }
-
-
-                // if (!data) {
-                //     console.log('文件中无数据');
-                //     if (pathName === "/login") {
-                //         res.end("该用户不存在!");
-                //         return;
-                //     }
-                //     if (pathName === "/register") {
-                //         let arr = [];
-                //         let obj = {};
-                //         obj.username = body.username;
-                //         obj.password = Md5.md5(body.password);
-                //         obj.email = body.email;
-                //         arr.push(obj);
-                //         fs.writeFileSync("../userInfo.txt", JSON.stringify(arr), "utf-8");
-                //         res.end("注册成功!");
-                //     }
-                // } else {
-                //     console.log("文件中有数据");
-                //     let arr = JSON.parse(data);
-                //     for (let i = 0; i < arr.length; i++) {
-                //         let obj = arr[i];
-                //         if (obj.email === body.email) {
-                //             if (pathName === "/login") {
-                //                 if (obj.password === Md5.md5(body.password)) {
-                //                     res.end(obj.username);
-                //                     return true;
-                //                 } else {
-                //                     res.end("密码错误!");
-                //                     return false;
-                //                 }
-                //             }
-                //             if (pathName === "/register") {
-                //                 res.end("该用户已存在!");
-                //                 return false;
-                //             }
-                //         }
-                //     }
-                //     if (pathName === "/login") {
-                //         res.end("该用户不存在!");
-                //         return;
-                //     }
-                //     if (pathName === "/register") {
-                //         //创建新对象写入数据
-                //         let obj = {};
-                //         obj.username = body.username;
-                //         obj.password = Md5.md5(body.password);
-                //         obj.email = body.email;
-                //         arr.push(obj);
-                //         fs.writeFileSync("../userInfo.txt", JSON.stringify(arr), "utf-8");
-                //         res.end("注册成功!");
-                //     }
-                // }
-
             })
         }
     });
