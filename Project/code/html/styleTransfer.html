@@ -111,7 +111,7 @@
         cv.Laplacian(gray_blur, edges, -1, ksize = 3);
 
         let cartoon = new cv.Mat();
-        cv.threshold(edges, cartoon, 150, 255, cv.THRESH_BINARY_INV);
+        cv.threshold(edges, cartoon, 70, 255, cv.THRESH_BINARY_INV);
 
         cv.imshow('pencilEdgeImg', cartoon);
     }

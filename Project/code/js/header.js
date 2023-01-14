@@ -40,6 +40,11 @@ function isLogged() {
 
 window.onload = function () {
     document.getElementById('userName').innerText = getCookie('userName');
+    if (isLogged()) {
+        document.getElementById('quit').style.display = 'inline-block';
+    } else {
+        document.getElementById('quit').style.display = 'none';
+    }
 }
 
 function quit() {

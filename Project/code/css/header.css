@@ -87,4 +87,5 @@ input:checked + .slider::before {
     color: black;
     border-color: black;
     border-radius:10px;
+    display: none;
 }
